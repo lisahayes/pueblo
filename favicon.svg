@@ -1,0 +1,13 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="4" fill="#475569"/>
+  <!-- Water drop shape -->
+  <path d="M16 5 C16 5 9 14 9 19 C9 23.4 12.1 27 16 27 C19.9 27 23 23.4 23 19 C23 14 16 5 16 5Z" fill="white"/>
+  <!-- Crosshair ring -->
+  <circle cx="16" cy="20" r="5" fill="none" stroke="#B45309" stroke-width="1.8"/>
+  <circle cx="16" cy="20" r="1.5" fill="#B45309"/>
+  <!-- Crosshair lines -->
+  <line x1="16" y1="13.5" x2="16" y2="15" stroke="#B45309" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="16" y1="25" x2="16" y2="26.5" stroke="#B45309" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="9.5" y1="20" x2="11" y2="20" stroke="#B45309" stroke-width="1.8" stroke-linecap="round"/>
+  <line x1="21" y1="20" x2="22.5" y2="20" stroke="#B45309" stroke-width="1.8" stroke-linecap="round"/>
+</svg>

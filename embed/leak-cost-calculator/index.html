@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Leak Cost Calculator Embed</title>
+  <meta name="robots" content="noindex">
+  <style>
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    body{font-family:'Source Sans Pro','Inter',system-ui,-apple-system,sans-serif;font-size:1rem;line-height:1.7;color:#1E293B;background:transparent;padding:1rem}
+    :root{--accent:#B45309;--accent-hover:#92400E;--dark:#1E293B;--border:#E2E8F0;--text-mid:#475569;--light:#F8FAFC}
+    .embed-title{font-family:'Barlow Condensed','Oswald',sans-serif;font-size:1.3rem;font-weight:700;text-transform:uppercase;color:var(--dark);margin-bottom:1.25rem;letter-spacing:.03em}
+    .field-group{margin-bottom:1.1rem}
+    .field-group label{display:block;font-size:.85rem;font-weight:700;color:var(--dark);margin-bottom:.35rem}
+    .field-group input[type=number]{width:100%;padding:.55rem .8rem;border:1px solid var(--border);border-radius:5px;font-size:.95rem;color:var(--dark);background:#fff}
+    .field-group input:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px rgba(180,83,9,.12)}
+    .toggle-row{display:flex;align-items:center;gap:.65rem;margin-bottom:1.1rem}
+    .toggle-row label{font-size:.88rem;font-weight:600;color:var(--dark);cursor:pointer}
+    .toggle-row input[type=checkbox]{width:17px;height:17px;accent-color:var(--accent);cursor:pointer;flex-shrink:0}
+    .calc-btn{width:100%;background:var(--accent);color:#fff;border:none;border-radius:6px;font-size:1rem;font-weight:700;padding:.8rem;cursor:pointer;margin-top:.4rem;min-height:48px}
+    .calc-btn:hover{background:var(--accent-hover)}
+    .powered{text-align:center;font-size:.75rem;color:#64748B;margin-top:1rem}
+    .powered a{color:var(--accent);text-decoration:none;font-weight:600}
+
+.calc-tabs{display:flex;gap:.5rem;margin-bottom:1.25rem;flex-wrap:wrap}
+.calc-tab{padding:.55rem 1.1rem;border:2px solid #E2E8F0;background:#fff;border-radius:5px;font-size:.88rem;font-weight:700;cursor:pointer;color:#475569;transition:all .15s}
+.calc-tab.active{border-color:#B45309;background:#B45309;color:#fff}
+.calc-panel{display:none}
+.quick-btns{display:flex;gap:.5rem;margin-top:.5rem;flex-wrap:wrap}
+.quick-btn{padding:.35rem .85rem;border:1px solid #E2E8F0;background:#F8FAFC;border-radius:4px;font-size:.82rem;cursor:pointer;color:#475569;transition:all .15s}
+.quick-btn:hover{border-color:#B45309;color:#B45309}
+.result-big{text-align:center;margin-bottom:1.25rem;padding:1.25rem;background:#FEF3C7;border-radius:8px}
+.result-num{font-family:'Barlow Condensed','Oswald',sans-serif;font-size:clamp(2rem,5vw,3rem);font-weight:700;color:#B45309;display:block}
+.result-unit{font-size:.9rem;color:#475569;margin-top:.2rem}
+.result-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:.75rem;margin-bottom:1.1rem}
+.result-cell{background:#fff;border:1px solid #E2E8F0;border-radius:6px;padding:.75rem;text-align:center}
+.result-cell .val{font-size:1.2rem;font-weight:700;color:#1E293B;display:block}
+.result-cell .lbl{font-size:.72rem;color:#475569;text-transform:uppercase;letter-spacing:.07em}
+.cost-line{background:#FFF7ED;border:1px solid #FED7AA;border-radius:6px;padding:.85rem 1rem;margin-bottom:.85rem;font-size:.9rem;color:#7C2D12}
+.cost-line strong{display:block;margin-bottom:.2rem}
+.sewer-note{background:#F8FAFC;border-left:3px solid #475569;padding:.7rem .9rem;margin-bottom:.85rem;font-size:.82rem;color:#475569;line-height:1.6}
+.equiv-line{font-size:.88rem;color:#475569;margin-bottom:1.1rem;padding:.6rem .9rem;background:#F8FAFC;border-radius:5px}
+.cta-btn{display:flex;align-items:center;justify-content:center;gap:.5rem;background:#B45309;color:#fff;text-decoration:none;font-weight:700;font-size:1rem;padding:.85rem 1.5rem;border-radius:6px;min-height:52px;transition:background .15s;width:100%}
+.cta-btn:hover{background:#92400E}
+.cta-btn svg{width:18px;height:18px;fill:currentColor;flex-shrink:0}
+.calc-results{display:none;margin-top:1.5rem;padding-top:1.5rem;border-top:2px solid #E2E8F0}
+.calc-results.visible{display:block}
+@media(max-width:480px){.result-grid{grid-template-columns:1fr 1fr}}
+
+  .site-logo img{height:44px;width:auto;display:block}@media(max-width:767px){.site-logo img{height:36px}}
+</style>
+</head>
+<body>
+<p class="embed-title">Leak Cost Calculator &mdash; Pueblo Water Rates</p>
+
+    <div class="calc-tabs" role="tablist">
+      <button class="calc-tab active" id="tab-drip" role="tab" aria-selected="true" onclick="setType('drip')">Dripping Faucet</button>
+      <button class="calc-tab" id="tab-toilet" role="tab" aria-selected="false" onclick="setType('toilet')">Running Toilet</button>
+      <button class="calc-tab" id="tab-trickle" role="tab" aria-selected="false" onclick="setType('trickle')">Steady Trickle</button>
+    </div>
+
+    <div id="panel-drip" class="calc-panel" style="display:block">
+      <div class="field-group">
+        <label for="drips">Drips per minute</label>
+        <input type="number" id="drips" value="60" min="1" max="500" step="1" inputmode="numeric">
+        <div class="quick-btns">
+          <button class="quick-btn" onclick="setDrips(10)">Slow (10/min)</button>
+          <button class="quick-btn" onclick="setDrips(60)">Steady (60/min)</button>
+          <button class="quick-btn" onclick="setDrips(120)">Fast (120/min)</button>
+        </div>
+        <p style="font-size:.78rem;color:#64748B;margin-top:.4rem">Count drips for 15 seconds and multiply by 4.</p>
+      </div>
+    </div>
+
+    <div id="panel-toilet" class="calc-panel" style="display:none">
+      <div class="field-group">
+        <label for="toilet-gpd">Gallons per day (default = moderate running toilet)</label>
+        <input type="number" id="toilet-gpd" value="480" min="10" max="5000" step="10" inputmode="numeric">
+        <p style="font-size:.78rem;color:#64748B;margin-top:.4rem">A moderate running toilet wastes roughly 200 to 1,400 gallons per day. Use 480 as a reasonable midpoint estimate.</p>
+      </div>
+    </div>
+
+    <div id="panel-trickle" class="calc-panel" style="display:none">
+      <div class="field-group">
+        <label for="trickle-gph">Gallons per hour (estimate from meter test)</label>
+        <input type="number" id="trickle-gph" value="" placeholder="e.g. 3.5" min="0.1" max="500" step="0.1" inputmode="decimal">
+      </div>
+    </div>
+
+    <div class="field-group">
+      <label for="fixture-count">Number of leaking fixtures</label>
+      <input type="number" id="fixture-count" value="1" min="1" max="20" step="1" inputmode="numeric">
+    </div>
+
+    <div class="toggle-row">
+      <input type="checkbox" id="indoor-toggle" checked>
+      <label for="indoor-toggle">Indoor leak (water drains inside the home, not to yard or irrigation)</label>
+    </div>
+
+    <button class="calc-btn" onclick="runCalc()">Calculate Cost on My Pueblo Water Bill</button>
+
+    <div class="calc-results" id="calc-results" aria-live="polite"></div>
+
+<p class="powered">Powered by <a href="https://puebloleakrepairpros.com" target="_blank">Pueblo Leak Repair Pros</a></p>
+<script>
+
+var leakType='drip', fixtureCount=1, indoorLeak=true;
+// Rates
+var WATER_RATE=3.58/1000; // per gallon
+var SEWER_RATE=6.14/1000;
+
+function setType(t){
+  leakType=t;
+  ['drip','toilet','trickle'].forEach(function(x){
+    document.getElementById('tab-'+x).classList.remove('active');
+    document.getElementById('panel-'+x).style.display='none';
+  });
+  document.getElementById('tab-'+t).classList.add('active');
+  document.getElementById('panel-'+t).style.display='block';
+}
+
+function setDrips(n){
+  document.getElementById('drips').value=n;
+}
+
+function fmt(n){
+  if(n>=1000)return Math.round(n).toLocaleString();
+  if(n>=10)return n.toFixed(1);
+  return n.toFixed(2);
+}
+
+function runCalc(){
+  var fixtures=parseInt(document.getElementById('fixture-count').value)||1;
+  var indoor=document.getElementById('indoor-toggle').checked;
+  var gpd=0;
+  if(leakType==='drip'){
+    var dpm=parseFloat(document.getElementById('drips').value)||0;
+    gpd=(dpm*60*24)/15140;
+  } else if(leakType==='toilet'){
+    gpd=parseFloat(document.getElementById('toilet-gpd').value)||480;
+  } else {
+    var gph=parseFloat(document.getElementById('trickle-gph').value)||0;
+    gpd=gph*24;
+  }
+  gpd*=fixtures;
+  if(gpd<=0){showError('Please enter a valid leak amount.');return;}
+
+  var gpm=gpd*30.44;
+  var gpy=gpd*365;
+  var wMo=(gpm/1000)*3.58;
+  var wYr=(gpy/1000)*3.58;
+  var sMo=(gpm/1000)*6.14;
+  var bathtubs=Math.round(gpy/50); // avg tub ~50 gal
+
+  var html='<div class="result-big"><span class="result-num">$'+wMo.toFixed(2)+'</span><span class="result-unit">per month on your Pueblo Water bill (water charges only)</span></div>';
+  html+='<div class="result-grid"><div class="result-cell"><span class="val">'+Math.round(gpd).toLocaleString()+'</span><span class="lbl">Gal/Day</span></div><div class="result-cell"><span class="val">'+Math.round(gpm).toLocaleString()+'</span><span class="lbl">Gal/Month</span></div><div class="result-cell"><span class="val">'+Math.round(gpy).toLocaleString()+'</span><span class="lbl">Gal/Year</span></div></div>';
+  html+='<div class="cost-line"><strong>About $'+wMo.toFixed(2)+' per month and $'+wYr.toFixed(0)+' per year</strong>Based on Pueblo Water 2026 residential rate of $3.58 per 1,000 gallons over the base minimum.</div>';
+  if(indoor){
+    html+='<div class="sewer-note"><strong>Sewer charge note:</strong> If this indoor leak runs during the Dec through Feb wastewater base period, Pueblo uses that usage to set your monthly sewer volume charge, adding roughly <strong>$'+sMo.toFixed(2)+'/month</strong> in City wastewater fees on top of the water cost. Summer or outdoor leaks do not affect the sewer bill.</div>';
+  }
+  html+='<div class="equiv-line">That is about <strong>'+bathtubs.toLocaleString()+' bathtubs of water per year</strong> lost to this leak.</div>';
+  html+='<a href="tel:+13035523896" class="cta-btn" aria-label="Call (303) 552-3896"><svg viewBox=\"0 0 24 24\" aria-hidden=\"true\"><path d=\"M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z\"/></svg>Call (303) 552-3896 to Stop This Leak</a>';
+
+  var el=document.getElementById('calc-results');
+  el.innerHTML=html;
+  el.classList.add('visible');
+  el.scrollIntoView({behavior:'smooth',block:'nearest'});
+}
+
+function showError(msg){alert(msg);}
+
+</script>
+</body>
+</html>
